@@ -8,7 +8,7 @@ const got = require('got');
 const uuid = require('uuid');
 
 // constants
-const dumpFolder = 'dumps/';
+const dumpFolder = __dirname + 'dumps/';
 const spBaseImg = 'watermark images/sp.png';
 const vidExtension = '.mp4';
 

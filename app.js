@@ -8,11 +8,11 @@ const path = require('path');
 const main = require('./main');
 
 const options = {
-  key: fs.readFileSync('./certs-new/localhost+4-key.pem', 'utf-8'),
-  cert: fs.readFileSync('./certs-new/localhost+4.pem', 'utf-8')
+  // key: fs.readFileSync('./certs-new/localhost+4-key.pem', 'utf-8'),
+  // cert: fs.readFileSync('./certs-new/localhost+4.pem', 'utf-8')
 };
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 // const port = process.env.PORT || 8000;
 
 app.use(bodyParser());
@@ -25,14 +25,14 @@ app.post('/video', (req, res) => {
   
   var vidUrl = main.beginVideo(req.body.vidUrl)
     .then((url) => {
-      res.send('https://192.168.1.100:8080/' + url);
+      res.send(url);
     });
   // res.send("response");
 });
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
-  res.sendFile('/index.html');
+  // res.sendFile('/index.html');
 });
 
 
