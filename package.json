@@ -1,25 +1,33 @@
 {
-  "name": "programming-langugages-api",
+  "name": "share-plus",
   "version": "1.0.0",
-  "description": "A demo REST API with Node.js Express.js and MySQL for most popular programming languages",
-  "main": "index.js",
+  "description": "share-plus",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/geshan/programming-langugages-api.git"
+    "url": "git+https://github.com/samkm-git/share-plus-h.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "samkm",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/geshan/programming-langugages-api/issues"
+    "url": "https://github.com/samkm-git/share-plus-h/issues"
   },
-  "homepage": "https://github.com/geshan/programming-langugages-api#readme",
+  "homepage": "https://github.com/samkm-git/share-plus-h#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "mysql2": "^2.2.5"
+    "mysql2": "^2.2.5",
+    "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "body-parser": "^1.19.0",
+    "ffmpeg": "^0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
+    "http-server": "^0.12.3",
+    "jimp": "^0.16.1",
+    "uuid": "^8.3.2",
+    "youtube-dl-exec": "^1.2.4"
   }
 }

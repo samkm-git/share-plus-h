@@ -1,0 +1,60 @@
+.theme-gradient {
+  background: #880e4f;
+  background: linear-gradient(126deg, rgba(136,14,79,1) 0%, rgba(74,20,140,1) 100%); 
+  color: white;
+}
+
+/* #9da2ad */
+
+#share-header {
+  height: 10%;
+}
+
+#logo {
+  background: white;
+  margin: 1%;
+  border-radius: 5px;
+  color: rgb(136,14,79);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: x-large;
+  font-weight: bold;
+  width: auto;
+}
+
+#share-plus {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+#url-container {
+  height: 90%;
+}
+
+#user-url-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#user-url {
+  width: 100%;
+  max-width: 700px;
+  font-size: x-large;
+  padding: 1%;
+  border-radius: 5px;
+}
+
+button#go, button#share-btn {
+  padding: 1%;
+  border-radius: 5px;
+  font-size: x-large;
+  border-color: transparent;
+  margin-left: 1%;
+}
+#share-btn {
+  /* display: none; */
+}

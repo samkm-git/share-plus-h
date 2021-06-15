@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>share+</title>
+
+  <script src=".\\vue3\\vue.global.js"></script>
+  <!-- <script src=".\\main.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href=".\\bootstrap-5.0.1\\dist\\css\\bootstrap.css">
+  <link rel="stylesheet" href=".\\main.css">
+</head>
+<body>
+  <div id="share-plus" class="container-fluid">
+    <header id="share-header" class="row theme-gradient">
+      <span id="logo" class="col-sm-4">
+        SHARE+
+      </span>
+    </header>
+
+    <div id="url-container" class="row">
+      <span class="col-sm-1 col-xl-2"></span>
+      <span id="user-url-container" class="col-sm-10 col-xl-8 row">
+        <input type="url" name="user-url" id="user-url" class="col-sm-10" placeholder="paste url: https://youtube.com/video">
+        <button id="go" class="col-sm-2 theme-gradient">GO</button>
+        <button id="share-btn" class="col-sm-2 theme-gradient">SHARE</button>
+        <button id="test-btn" class="col-sm-2 theme-gradient">TEST</button>
+      </span>
+      <span class="col-sm-1 col-xl-2"></span>
+    </div>
+
+  </div>
+
+  <script type="text/javascript">
+    
+    window.onload = function() {
+      // var fileArray = [];
+      // var file = null;
+      var url = null;
+      const go = document.querySelector('#go');
+      const shareBtn = document.querySelector('#share-btn');
+      const testBtn = document.querySelector('#test-btn');
+      var share;
+
+      if ('canShare' in navigator) {
+        share = async function(shareFile, shareurl, sharetitle, sharetext) {
+          try {
+            const response = await fetch(shareFile);
+            const blob = await response.blob();
+            const file = new File([blob], 'video.mp4', {type: blob.type});
+
+            await navigator.share({
+              url: shareurl,
+              title: sharetitle,
+              text: sharetext,
+              files: [file]
+            });
+          } catch (err) {
+            console.log(err.name, err.message);
+          }
+        };
+      }
+      else {
+        console.log('Video cannot be shared by this browser');
+        
+      }
+
+      // shareBtn.style.display = 'none';
+      go.addEventListener('click', () => {
+        var userUrl = document.querySelector('#user-url').value;
+        // fileArray = [];
+        // file = null;
+        url = null;
+        $.ajax({
+          url: '/video',
+          type: 'post',
+          data: {
+            vidUrl: userUrl 
+          },
+          success: async (res) => {
+            console.log(res);
+            url = res;
+            // shareBtn.style.display = 'block';
+          },
+          error: (err) => {
+            console.error(err);
+          }
+        });
+      });
+    
+      shareBtn.addEventListener('click', async () => {
+        try {
+          share(
+            url,
+            'https://shareplus.com',
+            'shareplus.com',
+            'Download YouTube video from '
+          );
+        } catch(err) {
+          console.error('ERROR:', err);
+        }
+      });
+      
+      
+      testBtn.addEventListener('click', async () => {
+        let res = 'https://192.168.1.100:8080/dumps/56ab19a8-2b8b-4931-8019-3f2eaf5cf51f/out-vid-56ab19a8-2b8b-4931-8019-3f2eaf5cf51f.mp4';
+        // let res = 'https://192.168.1.100:8080/dumps/c7b7bb29-222a-48de-81e4-4d24af65d168/out-vid-c7b7bb29-222a-48de-81e4-4d24af65d168.mp4';
+        // let res = 'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4';
+        // let res = 'https://file-examples-com.github.io/uploads/2018/04/file_example_AVI_480_750kB.avi';
+        share(
+          res,
+          'https://shareplus.com',
+          'shareplus.com',
+          'Download YouTube video from '
+        );
+      });
+    };
+    
+    
+  </script>
+
+</body>
+</html>
