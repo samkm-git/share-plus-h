@@ -11,7 +11,7 @@ const path = require('path');
 // constants
 const publicFolder = path.join(__dirname, 'public');
 const dumpFolder = path.join(publicFolder, 'dumps');
-const spBaseImg = path.join('watermark images', 'sp.png');
+const spBaseImg = path.join('watermark images', 'spf_transparent.png');
 const vidExtension = '.mp4';
 
 const retRes = () => console.log('finished execution');
@@ -36,7 +36,11 @@ async function ytVideoGet(url) {
       referer: 'https://example.com'
     });
     
-    return info;
+    return {
+      'owner': info.channel,
+      'videoUrl': info.requested_formats[0].url,
+      'audioUrl': info.requested_formats[1].url
+    };
   } catch (error) {
    logErr(error);
    return {}; 
@@ -57,9 +61,9 @@ function videoResize(info) {
     ffmpeg()
       .input(got.stream(info.videoUrl))
       // .videoCodec('H264')
-      .size('720x?')
-      .aspect('9:16')
-      .autopad()
+      .size('480x?')
+      // .aspect('9:16')
+      // .autopad()
       .on('end', () => {
         console.log(vidName, 'completed');
         resolve({
@@ -84,7 +88,7 @@ function videoOverlay(vidInfo, imageName, info) {
       .input(path.join(currentVidPath, imageName))
       // .audioCodec('aac')
       .complexFilter([
-        'overlay=W/2-w/2:H-h-100'
+        'overlay=W/2-w/2:H-h'
       ])
       .on('end', () => {
         console.log(outVidName, 'completed');
@@ -97,7 +101,7 @@ function videoOverlay(vidInfo, imageName, info) {
         console.error(outVidName, 'failed with ERROR:', err);
         reject(new Error(err));
       })
-      .save(path.join(currentVidPath + outVidName));
+      .save(path.join(currentVidPath, outVidName));
   });
 }
 
@@ -106,18 +110,30 @@ async function overlayInfo(info) {
     var vidTmp = await videoResize(info);
       
     console.log('starting text processing');
-    
+    const SP_YT_TEXT = 'shareplus.com                            YouTube';
+    var font1 = await Jimp.loadFont(path.join(__dirname, 'SPFONT14PX', 'Unnamed.fnt'));
+    var font2 = await Jimp.loadFont(path.join(__dirname, 'SPFONT32PX', 'Unnamed.fnt'));
+    var imageTmpName = 'img-tmp-' + vidTmp.id + '.png';
     var image = await Jimp.read(spBaseImg);
-    var font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE)
-    var imageName = 'img-' + vidTmp.id + '.png';
-    var imageFinal = await image
-      .print(font, 15, 54, info.owner)
-      .write(path.join(dumpFolder, vidTmp.id, imageName));
+    var imageTmpStatus = await new Promise((resolve, reject) => { 
+      image
+        .print(font1, 15, 0, SP_YT_TEXT)
+        .write(path.join(dumpFolder, vidTmp.id, imageTmpName), () => resolve(true));
+    });
     
+    var imageName = 'img-' + vidTmp.id + '.png';
+    var imageTmp = await Jimp.read(path.join(dumpFolder, vidTmp.id, imageTmpName));
+    var imageFinalStatus = await new Promise((resolve, reject) => {
+      imageTmp
+        .print(font2, 15, 15, info.owner)
+        .write(path.join(dumpFolder, vidTmp.id, imageName), () => resolve(true));
+    });
+      
     var videoFinal = await videoOverlay(vidTmp, imageName, info);
   
     console.log(videoFinal.name, 'processed successfully');
-    return path.join(dumpFolder, vidTmp.id, videoFinal.name);
+    // return path.join(dumpFolder, vidTmp.id, videoFinal.name);
+    return path.join('dumps', vidTmp.id, videoFinal.name);
   } catch (error) {
     logErr(error);
     return error;
@@ -126,11 +142,7 @@ async function overlayInfo(info) {
 
 async function beginVideo(url) {
   info = await ytVideoGet(url);
-  vid = await overlayInfo({
-    'owner': info.channel,
-    'videoUrl': info.requested_formats[0].url,
-    'audioUrl': info.requested_formats[1].url
-  });
+  vid = await overlayInfo(info);
   return vid;
 }
 

@@ -19,7 +19,7 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser());
 // app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 app.post('/video', (req, res) => {
   // console.log(req);
@@ -42,5 +42,5 @@ app.get('/', (req, res) => {
 // app.listen(port, () => console.log(`Listening on ${ port }`));
 // var httpsServer = https.createServer(options, app);
 // httpsServer.listen(port, () => console.log(`Listening on ${ port }`));
-var httpServer = http.createServer(options, app);
+var httpServer = http.createServer({}, app);
 httpServer.listen(port, () => console.log(`Listening on ${ port }`));
