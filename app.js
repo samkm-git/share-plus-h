@@ -1,4 +1,5 @@
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -39,5 +40,7 @@ app.get('/', (req, res) => {
 
 
 // app.listen(port, () => console.log(`Listening on ${ port }`));
-var httpsServer = https.createServer(options, app);
-httpsServer.listen(port, () => console.log(`Listening on ${ port }`));
+// var httpsServer = https.createServer(options, app);
+// httpsServer.listen(port, () => console.log(`Listening on ${ port }`));
+var httpServer = http.createServer(options, app);
+httpServer.listen(port, () => console.log(`Listening on ${ port }`));
