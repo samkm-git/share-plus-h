@@ -16,9 +16,11 @@ const retRes = () => console.log('finished execution');
 const logErr = error => console.error(error);
 
 // Add dumps if required
-if (!fs.existsSync(dumpFolder)){
-  fs.mkdirSync(dumpFolder);
-}
+// if (!fs.existsSync(dumpFolder)){
+//   fs.mkdirSync(dumpFolder);
+// }
+console.log(__dirname);
+
 
 async function ytVideoGet(url) {
   try {
