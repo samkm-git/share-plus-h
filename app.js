@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const main = require('.\\main');
+const main = require('./main');
 
 const options = {
   // key: fs.readFileSync('./certs-new/localhost+4-key.pem', 'utf-8'),
