@@ -5,7 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const main = require('./main');
+const main = require('main');
 
 const options = {
   // key: fs.readFileSync('./certs-new/localhost+4-key.pem', 'utf-8'),
@@ -13,11 +13,12 @@ const options = {
 };
 
 const port = process.env.PORT || 3000;
+// const port = 8080;
 // const port = process.env.PORT || 8000;
 
 app.use(bodyParser());
 // app.use(app.router);
-app.use(express.static(__dirname + ''));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/video', (req, res) => {
   // console.log(req);
@@ -26,16 +27,17 @@ app.post('/video', (req, res) => {
   var vidUrl = main.beginVideo(req.body.vidUrl)
     .then((url) => {
       res.send(url);
+      console.log(url);
     });
   // res.send("response");
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
   // res.sendFile('/index.html');
 });
 
 
-// app.listen(port);
+// app.listen(port, () => console.log(`Listening on ${ port }`));
 var httpsServer = https.createServer(options, app);
-httpsServer.listen(port);
+httpsServer.listen(port, () => console.log(`Listening on ${ port }`));

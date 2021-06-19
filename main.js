@@ -6,20 +6,22 @@ const fs = require('fs')
 var Jimp = require('jimp');
 const got = require('got');
 const uuid = require('uuid');
+const path = require('path');
 
 // constants
-const dumpFolder = __dirname + 'dumps/';
-const spBaseImg = 'watermark images/sp.png';
+const publicFolder = path.join(__dirname, 'public');
+const dumpFolder = path.join(publicFolder, 'dumps');
+const spBaseImg = path.join('watermark images', 'sp.png');
 const vidExtension = '.mp4';
 
 const retRes = () => console.log('finished execution');
 const logErr = error => console.error(error);
 
 // Add dumps if required
-// if (!fs.existsSync(dumpFolder)){
-//   fs.mkdirSync(dumpFolder);
-// }
-console.log(__dirname);
+if (!fs.existsSync(dumpFolder)){
+  fs.mkdirSync(dumpFolder);
+}
+console.log(dumpFolder);
 
 
 async function ytVideoGet(url) {
@@ -44,7 +46,7 @@ async function ytVideoGet(url) {
 function videoResize(info) {
   var id = uuid.v4();
   const vidName = 'vid-' + id + vidExtension;
-  const currentVidPath = dumpFolder + id + '/'; 
+  const currentVidPath = path.join(dumpFolder, id); 
 
   if (!fs.existsSync(currentVidPath)){
     fs.mkdirSync(currentVidPath);
@@ -69,17 +71,17 @@ function videoResize(info) {
         console.error(vidName, 'failed with ERROR:', err);
         reject(new Error(err));
       })
-      .save(currentVidPath + vidName);
+      .save(path.join(currentVidPath, vidName));
   });
 }
 
 function videoOverlay(vidInfo, imageName, info) {
   const outVidName = 'out-' + vidInfo.name;
-  const currentVidPath = dumpFolder + vidInfo.id + '/'; 
+  const currentVidPath = path.join(dumpFolder, vidInfo.id); 
   return new Promise((resolve, reject) => {
-    ffmpeg(currentVidPath + vidInfo.name)
+    ffmpeg(path.join(currentVidPath, vidInfo.name))
       .input(got.stream(info.audioUrl))
-      .input(currentVidPath + imageName)
+      .input(path.join(currentVidPath, imageName))
       // .audioCodec('aac')
       .complexFilter([
         'overlay=W/2-w/2:H-h-100'
@@ -95,7 +97,7 @@ function videoOverlay(vidInfo, imageName, info) {
         console.error(outVidName, 'failed with ERROR:', err);
         reject(new Error(err));
       })
-      .save(currentVidPath + outVidName);
+      .save(path.join(currentVidPath + outVidName));
   });
 }
 
@@ -110,12 +112,12 @@ async function overlayInfo(info) {
     var imageName = 'img-' + vidTmp.id + '.png';
     var imageFinal = await image
       .print(font, 15, 54, info.owner)
-      .write(dumpFolder + vidTmp.id + '/' + imageName);
+      .write(path.join(dumpFolder, vidTmp.id, imageName));
     
     var videoFinal = await videoOverlay(vidTmp, imageName, info);
   
     console.log(videoFinal.name, 'processed successfully');
-    return dumpFolder + vidTmp.id + '/' + videoFinal.name;
+    return path.join(dumpFolder, vidTmp.id, videoFinal.name);
   } catch (error) {
     logErr(error);
     return error;
